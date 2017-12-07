@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+
+'use strict';
+
+let program = require( 'commander' );
+let pkg = require( './package' );
+let xformFile;
+let fs = require( 'fs' );
+
+program
+    .usage( '[options] <file>' )
+    .version( pkg.version )
+    .parse( process.argv );
+
+xformFile = program.args[ 0 ];
+
+if ( xformFile ) {
+    console.log( 'validating ' + xformFile );
+
+    _getFileContents( xformFile )
+        .then( validate )
+        .catch( function( error ) {
+            console.error( error );
+            console.log( '\nResult: Invalid' );
+            process.exit( 1 );
+        } )
+        .then( function( warnings ) {
+            console.log( warnings.join( '\n' ) );
+            console.log( '\n>> XForm is valid! See above for any warnings.' );
+            process.exit( 0 );
+        } );
+
+} else {
+    console.log( 'Nothing to do. No XForm File provided. Use --help flag to see manual.' );
+}
+
+function _getFileContents( filePath ) {
+    return new Promise( function( resolve, reject ) {
+        fs.readFile( filePath, 'utf8', function( err, xform ) {
+            if ( err ) {
+                if ( err.code === 'ENOENT' ) {
+                    err = 'File: ' + filePath + ' does not exist.';
+                }
+                reject( err );
+            } else {
+                resolve( xform );
+            }
+        } );
+    } );
+}
+
+// replace with call to separate module
+function validate( xformContent ) {
+    // throw new Error('damn!');
+    // console.log('xform', xformContent);
+    return Promise.resolve( [ 'warning1', 'warning2' ] );
+}

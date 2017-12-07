@@ -1,0 +1,28 @@
+{
+  "name": "enketo-validate",
+  "version": "0.0.1",
+  "description": "An XForm validator around Enketo's form engine",
+  "main": "validate.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enketo/enketo-validate.git"
+  },
+  "keywords": [
+    "Enketo",
+    "XForms",
+    "ODK",
+    "Validator"
+  ],
+  "author": "Martijn van de Rijdt",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/enketo/enketo-validate/issues"
+  },
+  "homepage": "https://github.com/enketo/enketo-validate#readme",
+  "dependencies": {
+    "commander": "^2.12.2"
+  }
+}
