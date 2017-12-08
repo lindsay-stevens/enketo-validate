@@ -1,17 +1,18 @@
 'use strict';
 
 const XPathJS = require( 'enketo-xpathjs' );
+const jsdom = require( 'jsdom' );
 const {
-    DOMParser,
-    XMLSerializer
-} = require( 'xmldom' );
+    JSDOM
+} = jsdom;
 
 let validate = xformStr => {
     let warnings = [ 'warning 1' ];
-    let doc = _parseXml( xformStr );
-    let nsResolver = _getNsResolver( doc );
+    const dom = _parseXml( xformStr );
+    const doc = dom.window.document;
+    const nsResolver = _getNsResolver( dom );
 
-    _bindEvaluator( doc );
+    _bindEvaluator( dom );
 
     try {
         console.log( 'find first label', doc.evaluate( '//xf:label', doc, nsResolver, 2, null ).stringValue );
@@ -23,47 +24,33 @@ let validate = xformStr => {
 };
 
 let _parseXml = xmlStr => {
-    let errors = [];
-    const xmlParseError = 'XML Parse Error: ';
-    const options = {
-        // Treat warnings, errors and fatalErrors the same. Collect them all.
-        errorHandler: e => errors.push( xmlParseError + _cleanXmlDomParserError( e ) )
-    };
-
-    const parser = new DOMParser( options );
-    let doc = parser.parseFromString( xmlStr, 'text/xml' );
-
-    if ( errors.length ) {
-        throw errors;
+    try {
+        return new JSDOM( xmlStr, {
+            contentType: 'text/xml'
+        } );
+    } catch ( e ) {
+        throw [ _cleanXmlDomParserError( e.message || e ) ];
     }
-
-    return doc;
 };
 
 let _cleanXmlDomParserError = errorStr => {
-    const lineRefIndex = errorStr.search( '\n@#' ) || undefined;
-    return errorStr
-        .substring( errorStr.indexOf( '\t' ) + 1, lineRefIndex )
-        .replace( /!!/g, '!' );
+    const parts = errorStr.split( '\n' );
+    return parts[ 0 ] + ' ' + parts.splice( 1, 4 ).join( ', ' );
 };
 
-let _bindEvaluator = doc => {
-    let evaluator = new XPathJS.XPathEvaluator();
-
-    global.window = {};
-    global.document = {};
-
-    console.log( 'binding' );
+let _bindEvaluator = dom => {
+    global.window = dom.window;
+    global.document = dom.window.document;
 
     try {
-        XPathJS.bindDomLevel3XPath( doc );
+        XPathJS.bindDomLevel3XPath();
     } catch ( e ) {
         console.error( 'issue with binding XPathJS', e );
     }
 };
 
 // To be replaced by one that evaluates the doc (see Enketo Core)
-let _getNsResolver = ( doc ) => {
+let _getNsResolver = dom => {
     const namespaces = {
         'xf': 'http://www.w3.org/2002/xforms',
         'orx': 'http://openrosa.org/xforms',

@@ -25,6 +25,6 @@
     "dependencies": {
         "commander": "^2.12.2",
         "enketo-xpathjs": "^1.6.1",
-        "xmldom": "^0.1.27"
+        "jsdom": "^11.5.1"
     }
 }
