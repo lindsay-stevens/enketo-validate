@@ -40,7 +40,7 @@ if ( program.me ) {
 
     _getFileContents( xformFile )
         .then( validate )
-        .catch( function( errors ) {
+        .catch( function( errors = [] ) {
             console.error( errors.join('\n') );
             console.log( '\nResult: Invalid' );
             process.exit( 1 );
