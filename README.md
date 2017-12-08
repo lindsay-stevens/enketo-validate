@@ -9,7 +9,6 @@ _Validate XForms using Enketo's form engine_
 2. clone repo (TODO: publish on npm)
 3. `npm install --production`
 
-
 ### Use
 
 ```bash
