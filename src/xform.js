@@ -3,6 +3,7 @@
 const jsdom = require( 'jsdom' );
 const { JSDOM } = jsdom;
 const XPathJS = require( 'enketo-xpathjs' );
+//const EnketoFormModel = require( 'enketo-core/src/js/Form-model' );
 
 class XForm {
 
