@@ -12,12 +12,12 @@ _Validate XForms using Enketo's form engine_
 ### Use
 
 ```bash
-> ./validate ~/myform.xml
+$ ./validate ~/myform.xml
 ```
 
 ### Help
 ```bash
-> ./validate --help
+$ ./validate --help
 ```
 
 
@@ -29,14 +29,13 @@ In it's current iteration, the validator does the following:
 * It checks if each bind `nodeset` exists in the primary instance.
 * It checks for each `<bind>` whether the `relevant`, `constraint`, `calculate`, and `required` expressions are supported and valid XPath\*.
 
-
-\*Note, that /path/to/nonexisting/node is not an XPath problem, and considered valid.
+\* Note, that /path/to/nonexisting/node is not an XPath problem, and considered valid.
 
 In the future, some ideas extend validation further are:
 
 * Check whether XForms syntax is valid using an XML Schema.
-* Check if all instance elements referred to anywhere in instance(ID)/path/to/node exist in model
-* Check if all itext elements referred to anywhere in exist in model
+* Check whether all instance elements referred to anywhere in instance(ID)/path/to/node exist in model.
+* Check whether all itext elements referred to anywhere in exist in model.
 
 ### Funding
 
