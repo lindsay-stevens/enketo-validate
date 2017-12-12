@@ -5,11 +5,11 @@
     <model>
         <instance>
             <data>
-              <a/>
+                <a/>
+                <b/>
+                <c/>
             </data>
         </instance>
-        <instance id="existing" src="jr://file/existing.xml"/>
-        <bind nodeset="/data/b"/>
     </model>
   </h:head>
   <h:body>
