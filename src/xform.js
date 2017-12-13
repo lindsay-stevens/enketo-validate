@@ -91,7 +91,7 @@ class XForm {
      * and cannot be evaluated in XPath, and I hate it, we just strip it out.
      */
     _stripJrChoiceName( expr ) {
-        return expr.replace( /jr:choice-name\(.*\)/g, '' );
+        return expr.replace( /jr:choice-name\(.*\)/g, '"a"' );
     }
 
     /*
