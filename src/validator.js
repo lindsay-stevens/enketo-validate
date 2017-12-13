@@ -10,7 +10,7 @@ let validate = xformStr => {
     try {
         xform = new XForm( xformStr );
     } catch ( e ) {
-        console.error( 'parsing failed: ', e );
+        //console.error( 'parsing failed: ', e );
         errors.push( e );
     }
 
@@ -42,10 +42,10 @@ let validate = xformStr => {
                 return;
             }
 
-            const calculate = context.getAttribute( 'calculate' );
-            const constraint = context.getAttribute( 'constraint' );
-            const relevant = context.getAttribute( 'relevant' );
-            const required = context.getAttribute( 'required' );
+            const calculate = bind.getAttribute( 'calculate' );
+            const constraint = bind.getAttribute( 'constraint' );
+            const relevant = bind.getAttribute( 'relevant' );
+            const required = bind.getAttribute( 'required' );
 
             if ( calculate ) {
                 console.log( 'calculate', calculate );
@@ -60,7 +60,7 @@ let validate = xformStr => {
                 console.log( 'required', required );
             }
 
-            console.log( 'found context for ', nodeName );
+            //console.log( 'found context for ', nodeName );
         } );
     }
 

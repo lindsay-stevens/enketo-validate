@@ -2,9 +2,12 @@
 
 const jsdom = require( 'jsdom' );
 const { JSDOM } = jsdom;
-const { serializeToString } = require( 'xmlserializer' );
 const fs = require( 'fs' );
 const path = require( 'path' );
+const libxslt = require( 'libxslt' );
+const libxmljs = libxslt.libxmljs;
+const sheets = require( 'enketo-xslt' );
+const xslModelSheet = libxslt.parse( sheets.xslModel );
 
 class XForm {
 
@@ -12,7 +15,7 @@ class XForm {
         if ( !xformStr || !xformStr.trim() ) {
             throw 'Empty form. [general]';
         }
-        this.xformStr = this._deactivateDefaultNamespace( xformStr );
+        this.xformStr = xformStr; //this._deactivateDefaultNamespace( xformStr );
         this.dom = this._getDom();
         this.doc = this.dom.window.document;
     }
@@ -27,7 +30,8 @@ class XForm {
         // This window is used to run the Enketo Core form model. 
         // It is not to be confused with this.dom.window which contains the XForm.
         const virtualConsole = new jsdom.VirtualConsole();
-        const { window } = new JSDOM( ``, { runScripts: 'dangerously', virtualConsole: virtualConsole } );
+        // TODO: silencing the virtualConsole is not working
+        const { window } = new JSDOM( '', { runScripts: 'dangerously', virtualConsole: virtualConsole } );
         const enketoCoreFormModel = fs.readFileSync( path.join( process.cwd(), 'build/FormModel-bundle.js' ), { encoding: 'utf-8' } );
         const scriptEl = window.document.createElement( 'script' );
         scriptEl.textContent = enketoCoreFormModel;
@@ -36,8 +40,11 @@ class XForm {
         // Disable the jsdom evaluator
         window.document.evaluate = undefined;
 
+        const modelStr = this._extractModelStr().root().get( '*' ).toString( false );
+        //console.log( 'acceptable string of model', modelStr );
+
         // Instantiate an Enketo Core form model
-        this.model = new window.FormModel( serializeToString( this.doc.querySelector( 'model' ) ), {}, this.dom.window, this.dom.window.document );
+        this.model = new window.FormModel( modelStr, {} );
         let loadErrors = this.model.init();
 
         if ( loadErrors.length ) {
@@ -45,45 +52,28 @@ class XForm {
         }
     }
 
-    //getPrimaryInstanceNode( path ) {
-    //const efficientPath = path.replace( /^(\/(?!model\/)[^\/][^\/\s,"']*\/)/, '/__h:html/__h:head/model/instance[1]$1' );
-    //   return this._getNode( efficientPath );
-    // }
-
-    enketoEvaluate( expr, type, context ) {
-            try {
-                if ( !this.model ) {
-                    console.log( 'Unexpectedly there is no model when enketoEvaluate is called, creating one.' );
-                    this.parseModel();
-                }
-                // Note that the jsdom XPath evaluator was disabled in parseModel.
-                // So we are certain to be testing Enketo's own XPath evaluator.
-                return this.model.evaluate( expr, 'string', context );
-            } catch ( e ) {
-                //console.error( 'caught XPath exception', e );
-                throw this._cleanXPathException( e );
+    enketoEvaluate( expr, type = 'string', contextPath ) {
+        try {
+            if ( !this.model ) {
+                console.log( 'Unexpectedly, there is no model when enketoEvaluate is called, creating one.' );
+                this.parseModel();
             }
+            // Note that the jsdom XPath evaluator was disabled in parseModel.
+            // So we are certain to be testing Enketo's own XPath evaluator.
+            return this.model.evaluate( expr, type, contextPath );
+        } catch ( e ) {
+            //console.error( 'caught XPath exception', e );
+            throw this._cleanXPathException( e );
         }
-        /*
-            _getNodes( expr ) {
-                let nodes = [];
-                // This is using the JSDOM XPath evaluator.
-                let result = this.doc.evaluate( expr, this.doc, this.nsResolver, 7, null );
+    }
 
-                for ( let j = 0; j < result.snapshotLength; j++ ) {
-                    nodes.push( result.snapshotItem( j ) );
-                }
-
-                return nodes;s
-            }
-
-            _getNode( path ) {
-                // This is using the JSDOM XPath evaluator.
-                return this.doc.evaluate( path, this.doc, this.nsResolver, 9, 0 ).singleNodeValue;
-            }
-        */
-    _deactivateDefaultNamespace( xmlStr ) {
-        return xmlStr.replace( /\s(xmlns\=("|')[^\s\>]+("|'))/g, ' data-$1' );
+    /*
+     * This discombulated heavy-handed method ensures that the namespaces are included in their expected locations,
+     * at least where Enketo Core knows how to handle them.
+     */
+    _extractModelStr() {
+        let doc = libxmljs.parseXml( this.xformStr );
+        return xslModelSheet.apply( doc );
     }
 
     _getDom() {
@@ -121,15 +111,6 @@ class XForm {
         return [ error.message.split( '\n' )[ 0 ], error.name, error.code ].join( ', ' );
     }
 
-    /*
-    _bindXPathEvaluator() {
-        global.window = this.dom.window;
-        // Looks like this overwrite will not cause a problem when the app runs "clustered" (multiple threads)
-        global.document = this.dom.window.document;
-        // TODO: would be nice if we could pass window and document to XPathJS
-        XPathJS.bindDomLevel3XPath();
-    }
-    */
 }
 
 module.exports = {
