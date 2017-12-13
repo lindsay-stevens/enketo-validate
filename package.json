@@ -4,7 +4,8 @@
     "description": "An XForm validator around Enketo's form engine",
     "main": "src/validator.js",
     "scripts": {
-        "test": "mocha test/spec/*.spec.js"
+        "test": "mocha test/spec/*.spec.js",
+        "build": "browserify src/FormModel.js -o build/FormModel-bundle.js"
     },
     "repository": {
         "type": "git",
@@ -26,14 +27,10 @@
         "commander": "^2.12.2",
         "enketo-core": "^4.41.6",
         "jsdom": "^11.5.1",
-        "module-alias": "^2.0.3",
         "xmlserializer": "^0.6.0"
     },
     "devDependencies": {
         "chai": "^4.1.2",
         "mocha": "^4.0.1"
-    },
-    "_moduleAliases": {
-        "enketo-config": "./enketo-config"
     }
 }

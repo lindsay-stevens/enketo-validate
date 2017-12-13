@@ -16,13 +16,13 @@ describe( 'XPath expressions', () => {
 
         it( 'should throw an error message for selected()', () => {
             const expr = 'selected(/data/a)';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).to.throw();
         } );
 
         it( 'should throw an error message for floor()', () => {
             const expr = 'floor()';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).to.throw();
         } );
 
@@ -32,13 +32,13 @@ describe( 'XPath expressions', () => {
 
         it( 'should throw an error message for selected()', () => {
             const expr = 'selected(/data/a, /data/b, 4)';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).to.throw();
         } );
 
         it( 'should throw an error message for floor()', () => {
             const expr = 'floor(4, 5)';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).to.throw();
         } );
 
@@ -48,13 +48,13 @@ describe( 'XPath expressions', () => {
 
         it( 'should not throw an error message for selected()', () => {
             const expr = 'selected(/data/a, /data/b)';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).not.to.throw();
         } );
 
         it( 'should not throw an error message for floor()', () => {
             const expr = 'floor(4)';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).not.to.throw();
         } );
 
@@ -64,7 +64,7 @@ describe( 'XPath expressions', () => {
 
         it( 'should throw an error message for not-supported-fn()', () => {
             const expr = 'not-supported-fn(/data/a)';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).to.throw();
         } );
 
@@ -74,13 +74,19 @@ describe( 'XPath expressions', () => {
 
         it( 'should throw an error message if instance does not exist in the form', () => {
             const expr = 'instance("not-there")';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).to.throw();
         } );
 
-        it( 'should not throw an error message if instance exists in the form', () => {
-            const expr = 'instance("existing")';
-            const evaluationFn = () => xf.evaluate( expr );
+        it( 'should not throw an error message if internal instance exists in the form', () => {
+            const expr = 'instance("existing-internal")/item';
+            const evaluationFn = () => xf.enketoEvaluate( expr );
+            expect( evaluationFn ).not.to.throw();
+        } );
+
+        it( 'should not throw an error message if external instance exists in the form', () => {
+            const expr = 'instance("existing-external")/item';
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).not.to.throw();
         } );
 
@@ -89,7 +95,7 @@ describe( 'XPath expressions', () => {
     describe( 'with jr:choice-name() calls', () => {
         it( 'should not throw an error message', () => {
             const expr = 'jr:choice-name("yes", "/data/a")';
-            const evaluationFn = () => xf.evaluate( expr );
+            const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).not.to.throw();
         } );
     } );

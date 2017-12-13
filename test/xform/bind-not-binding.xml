@@ -6,9 +6,11 @@
         <instance>
             <data>
               <a/>
+              <meta>
+                <instanceID/>
+              </meta>
             </data>
         </instance>
-        <instance id="existing" src="jr://file/existing.xml"/>
         <bind nodeset="/data/b"/>
     </model>
   </h:head>

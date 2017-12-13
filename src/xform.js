@@ -1,68 +1,87 @@
 'use strict';
 
-// Use the _moduleAliases item in package.json to let enketo-core run without bundling (and aliasifying).
-require( 'module-alias/register' );
-
 const jsdom = require( 'jsdom' );
 const { JSDOM } = jsdom;
 const { serializeToString } = require( 'xmlserializer' );
-const EnketoFormModel = require( 'enketo-core/src/js/Form-model' );
+const fs = require( 'fs' );
+const path = require( 'path' );
 
 class XForm {
 
     constructor( xformStr ) {
         if ( !xformStr || !xformStr.trim() ) {
-            throw 'Error: empty form.';
+            throw 'Empty form. [general]';
         }
         this.xformStr = this._deactivateDefaultNamespace( xformStr );
         this.dom = this._getDom();
         this.doc = this.dom.window.document;
-        //console.log( 'typof dom.window.document.evaluate', typeof this.doc.evaluate );
-        //this.doc.evaluate = undefined;
-        //console.log( 'typof dom.window.document.evaluate', typeof this.doc.evaluate );
-        //this.nsResolver = this._getNsResolver();
-        //this._bindXPathEvaluator();
-
-        this.model = new EnketoFormModel( serializeToString( this.doc.querySelector( 'model' ) ) );
-        this.model.init();
-        console.log( 'modelStr', this.model.getStr() );
     }
 
     get binds() {
-        return this._getNodes( '/__h:html/__h:head/model/bind' );
+        return this.doc.querySelectorAll( 'bind' ); //this._getNodes( '/__h:html/__h:head/model/bind' );
     }
 
-    getPrimaryInstanceNode( path ) {
-        const efficientPath = path.replace( /^(\/(?!model\/)[^\/][^\/\s,"']*\/)/, '/__h:html/__h:head/model/instance[1]$1' );
-        return this._getNode( efficientPath );
-    }
+    // The reason this is not included in the constructor is to separate different types of errors,
+    // and keep the constructor just for XML parse errors.
+    parseModel() {
+        // This window is used to run the Enketo Core form model. 
+        // It is not to be confused with this.dom.window which contains the XForm.
+        const virtualConsole = new jsdom.VirtualConsole();
+        const { window } = new JSDOM( ``, { runScripts: 'dangerously', virtualConsole: virtualConsole } );
+        const enketoCoreFormModel = fs.readFileSync( path.join( process.cwd(), 'build/FormModel-bundle.js' ), { encoding: 'utf-8' } );
+        const scriptEl = window.document.createElement( 'script' );
+        scriptEl.textContent = enketoCoreFormModel;
+        window.document.body.appendChild( scriptEl );
 
-    evaluate( expr, context = this.doc ) {
-        try {
-            // We're only trying the Enketo XPath evaluator, not 'native' since we'd be testing the 
-            // "jsdom" module's implementation which is not really native.
-            return this.doc.evaluate( expr, context, this.nsResolver, 2, null ).stringValue;
-        } catch ( e ) {
-            //console.error( 'caught XPath exception', e );
-            throw this._cleanXPathException( e );
+        // Disable the jsdom evaluator
+        window.document.evaluate = undefined;
+
+        // Instantiate an Enketo Core form model
+        this.model = new window.FormModel( serializeToString( this.doc.querySelector( 'model' ) ), {}, this.dom.window, this.dom.window.document );
+        let loadErrors = this.model.init();
+
+        if ( loadErrors.length ) {
+            throw loadErrors;
         }
     }
 
-    _getNodes( expr ) {
-        let nodes = [];
-        let result = this.doc.evaluate( expr, this.doc, this.nsResolver, 7, null );
+    //getPrimaryInstanceNode( path ) {
+    //const efficientPath = path.replace( /^(\/(?!model\/)[^\/][^\/\s,"']*\/)/, '/__h:html/__h:head/model/instance[1]$1' );
+    //   return this._getNode( efficientPath );
+    // }
 
-        for ( let j = 0; j < result.snapshotLength; j++ ) {
-            nodes.push( result.snapshotItem( j ) );
+    enketoEvaluate( expr, type, context ) {
+            try {
+                if ( !this.model ) {
+                    console.log( 'Unexpectedly there is no model when enketoEvaluate is called, creating one.' );
+                    this.parseModel();
+                }
+                // Note that the jsdom XPath evaluator was disabled in parseModel.
+                // So we are certain to be testing Enketo's own XPath evaluator.
+                return this.model.evaluate( expr, 'string', context );
+            } catch ( e ) {
+                //console.error( 'caught XPath exception', e );
+                throw this._cleanXPathException( e );
+            }
         }
+        /*
+            _getNodes( expr ) {
+                let nodes = [];
+                // This is using the JSDOM XPath evaluator.
+                let result = this.doc.evaluate( expr, this.doc, this.nsResolver, 7, null );
 
-        return nodes;
-    }
+                for ( let j = 0; j < result.snapshotLength; j++ ) {
+                    nodes.push( result.snapshotItem( j ) );
+                }
 
-    _getNode( path ) {
-        return this.doc.evaluate( path, this.doc, this.nsResolver, 9, 0 ).singleNodeValue;
-    }
+                return nodes;s
+            }
 
+            _getNode( path ) {
+                // This is using the JSDOM XPath evaluator.
+                return this.doc.evaluate( path, this.doc, this.nsResolver, 9, 0 ).singleNodeValue;
+            }
+        */
     _deactivateDefaultNamespace( xmlStr ) {
         return xmlStr.replace( /\s(xmlns\=("|')[^\s\>]+("|'))/g, ' data-$1' );
     }
@@ -73,7 +92,6 @@ class XForm {
                 contentType: 'text/xml'
             } );
         } catch ( e ) {
-            // TODO: is it acceptable, to throw an array of strings?
             throw this._cleanXmlDomParserError( e );
         }
     }
@@ -81,9 +99,9 @@ class XForm {
     _getNsResolver() {
         const namespaces = {
             //'xf': 'http://www.w3.org/2002/xforms',
-            'orx': 'http://openrosa.org/xforms',
-            'jr': 'http://openrosa.org/javarosa',
-            'enk': 'http://enketo.org/xforms',
+            //'orx': 'http://openrosa.org/xforms',
+            //'jr': 'http://openrosa.org/javarosa',
+            //'enk': 'http://enketo.org/xforms',
             '__h': 'http://www.w3.org/1999/xhtml'
         };
 

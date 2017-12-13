@@ -14,7 +14,16 @@ let validate = xformStr => {
         errors.push( e );
     }
 
-    if ( errors.length === 0 ) {
+    try {
+        if ( xform ) {
+            xform.parseModel();
+        }
+    } catch ( e ) {
+        let ers = Array.isArray( e ) ? e : [ e ];
+        errors = errors.concat( ers );
+    }
+
+    if ( xform && errors.length === 0 ) {
 
         // Find binds
         xform.binds.forEach( function( bind, index ) {
@@ -26,11 +35,29 @@ let validate = xformStr => {
             }
 
             const nodeName = path.substring( path.lastIndexOf( '/' ) + 1 );
-            const context = xform.getPrimaryInstanceNode( path );
+            const context = xform.enketoEvaluate( path, 'node' ); //xform.getPrimaryInstanceNode( path );
 
             if ( !context ) {
                 warnings.push( `Found bind for "${nodeName}" that does not exist in the model.` );
                 return;
+            }
+
+            const calculate = context.getAttribute( 'calculate' );
+            const constraint = context.getAttribute( 'constraint' );
+            const relevant = context.getAttribute( 'relevant' );
+            const required = context.getAttribute( 'required' );
+
+            if ( calculate ) {
+                console.log( 'calculate', calculate );
+            }
+            if ( constraint ) {
+                console.log( 'constraint', constraint );
+            }
+            if ( relevant ) {
+                console.log( 'relevant', relevant );
+            }
+            if ( required ) {
+                console.log( 'required', required );
             }
 
             console.log( 'found context for ', nodeName );
