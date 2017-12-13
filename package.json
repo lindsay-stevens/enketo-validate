@@ -25,11 +25,15 @@
     "dependencies": {
         "commander": "^2.12.2",
         "enketo-core": "^4.41.6",
-        "enketo-xpathjs": "^1.6.1",
-        "jsdom": "^11.5.1"
+        "jsdom": "^11.5.1",
+        "module-alias": "^2.0.3",
+        "xmlserializer": "^0.6.0"
     },
     "devDependencies": {
         "chai": "^4.1.2",
         "mocha": "^4.0.1"
+    },
+    "_moduleAliases": {
+        "enketo-config": "./enketo-config"
     }
 }

@@ -1,9 +1,12 @@
 'use strict';
 
+// Use the _moduleAliases item in package.json to let enketo-core run without bundling (and aliasifying).
+require( 'module-alias/register' );
+
 const jsdom = require( 'jsdom' );
 const { JSDOM } = jsdom;
-const XPathJS = require( 'enketo-xpathjs' );
-//const EnketoFormModel = require( 'enketo-core/src/js/Form-model' );
+const { serializeToString } = require( 'xmlserializer' );
+const EnketoFormModel = require( 'enketo-core/src/js/Form-model' );
 
 class XForm {
 
@@ -14,8 +17,15 @@ class XForm {
         this.xformStr = this._deactivateDefaultNamespace( xformStr );
         this.dom = this._getDom();
         this.doc = this.dom.window.document;
-        this.nsResolver = this._getNsResolver();
-        this._bindXPathEvaluator();
+        //console.log( 'typof dom.window.document.evaluate', typeof this.doc.evaluate );
+        //this.doc.evaluate = undefined;
+        //console.log( 'typof dom.window.document.evaluate', typeof this.doc.evaluate );
+        //this.nsResolver = this._getNsResolver();
+        //this._bindXPathEvaluator();
+
+        this.model = new EnketoFormModel( serializeToString( this.doc.querySelector( 'model' ) ) );
+        this.model.init();
+        console.log( 'modelStr', this.model.getStr() );
     }
 
     get binds() {
@@ -93,6 +103,7 @@ class XForm {
         return [ error.message.split( '\n' )[ 0 ], error.name, error.code ].join( ', ' );
     }
 
+    /*
     _bindXPathEvaluator() {
         global.window = this.dom.window;
         // Looks like this overwrite will not cause a problem when the app runs "clustered" (multiple threads)
@@ -100,6 +111,7 @@ class XForm {
         // TODO: would be nice if we could pass window and document to XPathJS
         XPathJS.bindDomLevel3XPath();
     }
+    */
 }
 
 module.exports = {

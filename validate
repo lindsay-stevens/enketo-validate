@@ -41,14 +41,23 @@ if ( program.me ) {
     _getFileContents( xformFile )
         .then( validate )
         .catch( function( errors = [] ) {
+            errors = Array.isArray(errors) ? errors : [errors];
             console.error( errors.join('\n') );
             console.log( '\nResult: Invalid' );
             process.exit( 1 );
         } )
-        .then( function( warnings = [] ) {
-            console.log( warnings.join( '\n' ) );
-            console.log( '\n>> XForm is valid! See above for any warnings.' );
-            process.exit( 0 );
+        .then( function( result = {} ) {
+            if (result.warnings.length){
+                console.log( result.warnings.join( '\n' ) );
+            }
+            if (result.errors.length) {
+                console.error( result.errors.join('\n') );
+                console.log( '\nResult: Invalid' );
+                process.exit( 1 );
+            } else {
+                console.log( '\n>> XForm is valid! See above for any warnings.' );
+                process.exit( 0 );
+            }
         } );
 
 } else {
