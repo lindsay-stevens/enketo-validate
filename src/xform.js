@@ -56,7 +56,8 @@ class XForm {
             }
             // Note that the jsdom XPath evaluator was disabled in parseModel.
             // So we are certain to be testing Enketo's own XPath evaluator.
-            return this.model.evaluate( expr, type, contextPath );
+            let newExpr = this._stripJrChoiceName( expr );
+            return this.model.evaluate( newExpr, type, contextPath );
         } catch ( e ) {
             //console.error( 'caught XPath exception', e );
             throw this._cleanXPathException( e );
@@ -83,6 +84,14 @@ class XForm {
             external.push( { id: instance.id, xmlStr: dummyXmlStr } );
         } );
         return external;
+    }
+
+    /*
+     * Since this is such a weird function that queries the body of the XForm,
+     * and cannot be evaluated in XPath, and I hate it, we just strip it out.
+     */
+    _stripJrChoiceName( expr ) {
+        return expr.replace( /jr:choice-name\(.*\)/g, '' );
     }
 
     /*
