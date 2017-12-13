@@ -15,13 +15,13 @@ class XForm {
         if ( !xformStr || !xformStr.trim() ) {
             throw 'Empty form. [general]';
         }
-        this.xformStr = xformStr; //this._deactivateDefaultNamespace( xformStr );
+        this.xformStr = xformStr;
         this.dom = this._getDom();
         this.doc = this.dom.window.document;
     }
 
     get binds() {
-        return this.doc.querySelectorAll( 'bind' ); //this._getNodes( '/__h:html/__h:head/model/bind' );
+        return this.doc.querySelectorAll( 'bind' );
     }
 
     // The reason this is not included in the constructor is to separate different types of errors,
@@ -37,9 +37,10 @@ class XForm {
 
         // Get a serialized model with namespaces in locations that Enketo can deal with.
         const modelStr = this._extractModelStr().root().get( '*' ).toString( false );
+        const external = this._getExternalDummyContent();
 
         // Instantiate an Enketo Core Form Model
-        this.model = new window.FormModel( modelStr, {} );
+        this.model = new window.FormModel( { modelStr: modelStr, external: external } );
         let loadErrors = this.model.init();
 
         if ( loadErrors.length ) {
@@ -73,6 +74,15 @@ class XForm {
         scriptEl.textContent = scriptContent;
         window.document.body.appendChild( scriptEl );
         return window;
+    }
+
+    _getExternalDummyContent() {
+        const dummyXmlStr = '<something/>';
+        let external = [];
+        this.doc.querySelectorAll( 'instance[id][src]' ).forEach( function( instance ) {
+            external.push( { id: instance.id, xmlStr: dummyXmlStr } );
+        } );
+        return external;
     }
 
     /*

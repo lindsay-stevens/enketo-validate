@@ -29,4 +29,12 @@ describe( 'XForm', () => {
         } );
     } );
 
+    describe( 'with external instance', () => {
+        const xf = loadXForm( 'external-instance.xml' );
+        it( 'should not return an error because the instance is empty', () => {
+            const result = validator.validate( xf );
+            expect( result.errors.length ).to.equal( 0 );
+        } );
+    } );
+
 } );
