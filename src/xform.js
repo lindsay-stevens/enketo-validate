@@ -27,23 +27,18 @@ class XForm {
     // The reason this is not included in the constructor is to separate different types of errors,
     // and keep the constructor just for XML parse errors.
     parseModel() {
-        // This window is used to run the Enketo Core form model. 
-        // It is not to be confused with this.dom.window which contains the XForm.
-        const virtualConsole = new jsdom.VirtualConsole();
-        // TODO: silencing the virtualConsole is not working
-        const { window } = new JSDOM( '', { runScripts: 'dangerously', virtualConsole: virtualConsole } );
-        const enketoCoreFormModel = fs.readFileSync( path.join( process.cwd(), 'build/FormModel-bundle.js' ), { encoding: 'utf-8' } );
-        const scriptEl = window.document.createElement( 'script' );
-        scriptEl.textContent = enketoCoreFormModel;
-        window.document.body.appendChild( scriptEl );
+        const scriptContent = fs.readFileSync( path.join( process.cwd(), 'build/FormModel-bundle.js' ), { encoding: 'utf-8' } );
+
+        // This window is not to be confused with this.dom.window which contains the XForm.
+        const window = this._getWindow( scriptContent );
 
         // Disable the jsdom evaluator
         window.document.evaluate = undefined;
 
+        // Get a serialized model with namespaces in locations that Enketo can deal with.
         const modelStr = this._extractModelStr().root().get( '*' ).toString( false );
-        //console.log( 'acceptable string of model', modelStr );
 
-        // Instantiate an Enketo Core form model
+        // Instantiate an Enketo Core Form Model
         this.model = new window.FormModel( modelStr, {} );
         let loadErrors = this.model.init();
 
@@ -52,7 +47,7 @@ class XForm {
         }
     }
 
-    enketoEvaluate( expr, type = 'string', contextPath ) {
+    enketoEvaluate( expr, type = 'string', contextPath = null ) {
         try {
             if ( !this.model ) {
                 console.log( 'Unexpectedly, there is no model when enketoEvaluate is called, creating one.' );
@@ -65,6 +60,19 @@ class XForm {
             //console.error( 'caught XPath exception', e );
             throw this._cleanXPathException( e );
         }
+    }
+
+    /*
+     * Obtain an isolated "browser" window context and optionally, run a script in this context.
+     */
+    _getWindow( scriptContent = '' ) {
+        // Let any logging by Enketo Core fall into the abyss.
+        const virtualConsole = new jsdom.VirtualConsole();
+        const { window } = new JSDOM( '', { runScripts: 'dangerously', virtualConsole: virtualConsole } );
+        const scriptEl = window.document.createElement( 'script' );
+        scriptEl.textContent = scriptContent;
+        window.document.body.appendChild( scriptEl );
+        return window;
     }
 
     /*
@@ -84,22 +92,6 @@ class XForm {
         } catch ( e ) {
             throw this._cleanXmlDomParserError( e );
         }
-    }
-
-    _getNsResolver() {
-        const namespaces = {
-            //'xf': 'http://www.w3.org/2002/xforms',
-            //'orx': 'http://openrosa.org/xforms',
-            //'jr': 'http://openrosa.org/javarosa',
-            //'enk': 'http://enketo.org/xforms',
-            '__h': 'http://www.w3.org/1999/xhtml'
-        };
-
-        return {
-            lookupNamespaceURI: function( prefix ) {
-                return namespaces[ prefix ] || null;
-            }
-        };
     }
 
     _cleanXmlDomParserError( error ) {

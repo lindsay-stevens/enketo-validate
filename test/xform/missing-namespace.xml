@@ -7,6 +7,9 @@
             <data>
               <!-- namespace with prefix "abc" is not defined -->
               <abc:a/>
+              <orx:meta>
+                <orx:instanceID/>
+              </orx:meta>
             </data>
         </instance>
     </model>

@@ -6,9 +6,9 @@
         <instance>
             <data>
               <a/>
-              <meta>
-                <instanceID/>
-              </meta>
+              <orx:meta>
+                <orx:instanceID/>
+              </orx:meta>
             </data>
         </instance>
         <bind nodeset="/data/b"/>

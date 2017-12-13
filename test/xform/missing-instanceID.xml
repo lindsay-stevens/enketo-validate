@@ -5,10 +5,8 @@
     <model>
         <instance>
             <data>
-            <!-- NO CLOSING TAG FOR <data> -->
-            <orx:meta>
-              <orx:instanceID/>
-            </orx:meta>
+                <a/>
+            </data>
         </instance>
     </model>
   </h:head>

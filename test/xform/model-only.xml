@@ -8,6 +8,9 @@
                 <a/>
                 <b/>
                 <c/>
+                <orx:meta>
+                  <orx:instanceID/>
+                </orx:meta>
             </data>
         </instance>
         <instance id="existing-internal">
