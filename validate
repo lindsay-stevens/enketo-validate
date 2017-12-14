@@ -12,7 +12,7 @@ let _getFileContents = filePath => {
         fs.readFile( filePath, 'utf8', function( err, xform ) {
             if ( err ) {
                 if ( err.code === 'ENOENT' ) {
-                    err = 'File: ' + filePath + ' does not exist.';
+                    err = `File: ${filePath} does not exist.`;
                 }
                 reject( err );
             } else {
@@ -34,7 +34,7 @@ let xformFile = program.args[ 0 ];
 
 if ( program.me ) {
     console.log( 'You are correct.\nYour feelings matter.\nYou are wonderful and the world is better with you in it.' );
-    process.exit( 1 );
+    process.exit( 0 );
 } else if ( xformFile ) {
     console.log( 'validating ' + xformFile );
 
@@ -62,4 +62,5 @@ if ( program.me ) {
 
 } else {
     console.log( 'Nothing to do. No XForm File provided. Use --help flag to see manual.' );
+    process.exit(1);
 }

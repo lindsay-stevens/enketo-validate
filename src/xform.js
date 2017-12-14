@@ -114,7 +114,7 @@ class XForm {
     }
 
     _cleanXmlDomParserError( error ) {
-        const parts = error.message.split( '\n' );
+        let parts = error.message.split( '\n' );
         return parts[ 0 ] + ' ' + parts.splice( 1, 4 ).join( ', ' );
     }
 

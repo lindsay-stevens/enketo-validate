@@ -5,17 +5,20 @@ _Validate [ODK XForms](https://opendatakit.github.io/xforms-spec/) using Enketo'
 
 This app can be used:
 
-1. via the command-line, e.g. in a non-javascript form builder such as pyxform.
-2. as a javascript nodeJS module to be used in your own javascript application.
+1. via the command-line, e.g. in a non-javascript form builder such as pyxform
+2. as a javascript nodeJS module to be used in your own javascript application
 
 
-### 1. Command-line
+Live demo web application that uses Enketo Validate as a module:  [source code]()
+
+
+### Via Command-line
 
 #### Command-line Install
 
-a. install nodeJS 6+
-b. clone repo 
-c. `npm install --production`
+I. install nodeJS 6+
+II. clone repo 
+III. `npm install --production`
 
 #### Command-line Use
 
@@ -28,11 +31,13 @@ $ ./validate ~/myform.xml
 $ ./validate --help
 ```
 
-### NodeJS module
+### As NodeJS module
 
 #### Module installation 
 
-a. `npm install enketo-validate --save`
+```bash
+npm install enketo-validate --save
+```
 
 #### Module Use
 
@@ -51,11 +56,11 @@ In it's current iteration, the validator does the following:
 * It checks whether the XForm is a valid XML document.
 * It performs some basic ODK XForm structure checks.
 * It checks if each bind `nodeset` exists in the primary instance.
-* It checks for each `<bind>` whether the `relevant`, `constraint`, `calculate`, and `required` expressions are supported and valid XPath\*.
+* It checks for each `<bind>` whether the `relevant`, `constraint`, `calculate`, and `required` expressions are supported and valid\* XPath.
 
-\* Note, that /path/to/nonexisting/node is not an XPath problem, and considered valid.
+\* Note, that `/path/to/nonexisting/node` is perfectly valid XPath.
 
-In the future, some ideas extend validation further are:
+In the future, some ideas to extend validation further are:
 
 * Check whether XForms syntax is valid using an XML Schema.
 * Check whether all itext elements referred to anywhere exist in model.
