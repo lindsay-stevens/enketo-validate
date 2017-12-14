@@ -119,7 +119,12 @@ class XForm {
     }
 
     _cleanXPathException( error ) {
-        return [ error.message.split( '\n' )[ 0 ], error.name, error.code ].join( ', ' );
+        let parts = [ error.message.split( '\n' )[ 0 ], error.name, error.code ]
+            .filter( part => !!part );
+
+        parts[ 0 ] = parts[ 0 ].replace( /Function "{}(.*)"/, 'Function "$1"' );
+
+        return parts.join( ', ' );
     }
 
 }

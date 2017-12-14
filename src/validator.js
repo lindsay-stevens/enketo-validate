@@ -42,33 +42,21 @@ let validate = xformStr => {
                 return;
             }
 
-            const calculate = bind.getAttribute( 'calculate' );
-            const constraint = bind.getAttribute( 'constraint' );
-            const relevant = bind.getAttribute( 'relevant' );
-            const required = bind.getAttribute( 'required' );
-
-            if ( calculate ) {
-                console.log( 'calculate', calculate );
-            }
-            if ( constraint ) {
-                console.log( 'constraint', constraint );
-            }
-            if ( relevant ) {
-                console.log( 'relevant', relevant );
-            }
-            if ( required ) {
-                console.log( 'required', required );
-            }
+            [ 'calculate', 'constraint', 'relevant', 'required' ].forEach( function( logicName ) {
+                const logicExpr = bind.getAttribute( logicName );
+                if ( logicExpr ) {
+                    try {
+                        xform.enketoEvaluate( logicExpr, 'string', path );
+                        console.log( 'OK!' );
+                    } catch ( e ) {
+                        errors.push( `${logicName} for "${nodeName}": ${e}` );
+                    }
+                }
+            } );
 
             //console.log( 'found context for ', nodeName );
         } );
     }
-
-    //if ( errors.length ) {
-    //    console.log( 'errors', errors );
-    // TODO: is it okay to throw an array of strings?
-    //     throw errors;
-    //}
 
     return {
         warnings: warnings,
