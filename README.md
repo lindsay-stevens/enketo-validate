@@ -1,31 +1,55 @@
 Enketo Validate [![Build Status](https://travis-ci.org/enketo/enketo-validate.svg?branch=master)](https://travis-ci.org/enketo/enketo-validate)
 ==============
 
-_Validate XForms using Enketo's form engine_
+_Validate [ODK XForms](https://opendatakit.github.io/xforms-spec/) using Enketo's form engine_
 
-### Install
+This app can be used:
 
-1. install nodeJS 6+
-2. clone repo (TODO: publish on npm)
-3. `npm install --production`
+1. via the command-line, e.g. in a non-javascript form builder such as pyxform.
+2. as a javascript nodeJS module to be used in your own javascript application.
 
-### Use
+
+### 1. Command-line
+
+#### Command-line Install
+
+a. install nodeJS 6+
+b. clone repo 
+c. `npm install --production`
+
+#### Command-line Use
 
 ```bash
 $ ./validate ~/myform.xml
 ```
 
-### Help
+#### Command-line Help
 ```bash
 $ ./validate --help
 ```
 
+### NodeJS module
+
+#### Module installation 
+
+a. `npm install enketo-validate --save`
+
+#### Module Use
+
+```js
+const validator = require('enketo-validate');
+
+// read the xform as string
+
+let result = validator.validate( xformStr );
+```
 
 ### How it works
 
 In it's current iteration, the validator does the following:
 
 * It checks whether the XForm is a valid XML document.
+* It performs some basic ODK XForm structure checks.
 * It checks if each bind `nodeset` exists in the primary instance.
 * It checks for each `<bind>` whether the `relevant`, `constraint`, `calculate`, and `required` expressions are supported and valid XPath\*.
 
@@ -34,8 +58,7 @@ In it's current iteration, the validator does the following:
 In the future, some ideas extend validation further are:
 
 * Check whether XForms syntax is valid using an XML Schema.
-* Check whether all instance elements referred to anywhere in instance(ID)/path/to/node exist in model.
-* Check whether all itext elements referred to anywhere in exist in model.
+* Check whether all itext elements referred to anywhere exist in model.
 
 ### Funding
 
