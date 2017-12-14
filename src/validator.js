@@ -47,15 +47,15 @@ let validate = xformStr => {
                 if ( logicExpr ) {
                     try {
                         xform.enketoEvaluate( logicExpr, 'string', path );
-                        console.log( 'OK!' );
                     } catch ( e ) {
-                        errors.push( `${logicName} for "${nodeName}": ${e}` );
+                        let friendlyLogicName = ( logicName === 'calculate' ) ? 'calculation' : logicName;
+                        friendlyLogicName = friendlyLogicName[ 0 ].toUpperCase() + friendlyLogicName.substring( 1 );
+                        errors.push( `${friendlyLogicName} formula for "${nodeName}": ${e}` );
                     }
                 }
             } );
-
-            //console.log( 'found context for ', nodeName );
         } );
+
     }
 
     return {
