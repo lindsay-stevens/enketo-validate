@@ -27,7 +27,7 @@ class XForm {
     // The reason this is not included in the constructor is to separate different types of errors,
     // and keep the constructor just for XML parse errors.
     parseModel() {
-        const scriptContent = fs.readFileSync( path.join( process.cwd(), 'build/FormModel-bundle.js' ), { encoding: 'utf-8' } );
+        const scriptContent = fs.readFileSync( path.join( __dirname, '../build/FormModel-bundle.js' ), { encoding: 'utf-8' } );
 
         // This window is not to be confused with this.dom.window which contains the XForm.
         const window = this._getWindow( scriptContent );
