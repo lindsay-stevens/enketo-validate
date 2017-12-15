@@ -43,19 +43,19 @@ if ( program.me ) {
         .catch( function( errors = [] ) {
             errors = Array.isArray(errors) ? errors : [errors];
             console.error( errors.join('\n') );
-            console.log( '\nResult: Invalid' );
+            console.log( '\nResult: Invalid\n\n' );
             process.exit( 1 );
         } )
         .then( function( result = {} ) {
             if (result.warnings.length){
-                console.log( result.warnings.join( '\n' ) );
+                console.log( result.warnings.join( '\n\n' ) );
             }
             if (result.errors.length) {
-                console.error( result.errors.join('\n') );
+                console.error( result.errors.join('\n\n') );
                 console.log( '\nResult: Invalid' );
                 process.exit( 1 );
             } else {
-                console.log( '\n>> XForm is valid! See above for any warnings.' );
+                console.log( '\n>> XForm is valid! See above for any warnings.\n\n' );
                 process.exit( 0 );
             }
         } );

@@ -122,9 +122,12 @@ class XForm {
         let parts = [ error.message.split( '\n' )[ 0 ], error.name, error.code ]
             .filter( part => !!part );
 
-        parts[ 0 ] = parts[ 0 ].replace( /Function "{}(.*)"/, 'Function "$1"' );
-
-        return parts.join( ', ' );
+        parts[ 0 ] = parts[ 0 ]
+            .replace( /Function "{}(.*)"/g, 'Function "$1"' )
+            .replace( /\/model\/instance\[1\]/g, '' )
+            .replace( /\(line: undefined, character: undefined\)/g, '' );
+        // '. ,' => ','
+        return parts.join( ', ' ).replace( /\.\s*,/g, ',' );
     }
 
 }
