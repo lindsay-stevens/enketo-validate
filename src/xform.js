@@ -64,6 +64,86 @@ class XForm {
         }
     }
 
+    checkStructure( warnings, errors ) {
+        const htmlNamespace = 'http://www.w3.org/1999/xhtml';
+        const xformsNamespace = 'http://www.w3.org/2002/xforms';
+
+        const rootEl = this.doc.documentElement;
+        const rootElNodeName = rootEl.nodeName;
+        if ( !( /^[A-z]+:html$/.test( rootElNodeName ) ) ) {
+            errors.push( 'Root element should be <html>.' );
+        }
+        if ( rootEl.namespaceURI !== htmlNamespace ) {
+            errors.push( 'Root element has incorrect namespace.' );
+        }
+
+        let headEl;
+        let bodyEl;
+        for ( let el of rootEl.children ) {
+            if ( /^[A-z]+:head$/.test( el.nodeName ) ) {
+                headEl = el;
+            } else if ( /^[A-z]+:body$/.test( el.nodeName ) ) {
+                bodyEl = el;
+            }
+        }
+        if ( !headEl ) {
+            errors.push( 'No head element found as child of <html>.' );
+        }
+        if ( headEl && headEl.namespaceURI !== htmlNamespace ) {
+            errors.push( 'Head element has incorrect namespace.' );
+        }
+        if ( !bodyEl ) {
+            errors.push( 'No body element found as child of <html>.' );
+        }
+        if ( bodyEl && bodyEl.namespaceURI !== htmlNamespace ) {
+            errors.push( 'Body element has incorrect namespace.' );
+        }
+
+        let modelEl;
+        if ( headEl ) {
+            for ( let el of headEl.children ) {
+                if ( /^([A-z]+:)?model$/.test( el.nodeName ) ) {
+                    modelEl = el;
+                    break;
+                }
+            }
+            if ( !modelEl ) {
+                errors.push( 'No model element found as child of <head>.' );
+            }
+            if ( modelEl && modelEl.namespaceURI !== xformsNamespace ) {
+                errors.push( 'Model element has incorrect namespace.' );
+            }
+        }
+
+        let primInstanceEl;
+        if ( modelEl ) {
+            for ( let el of modelEl.children ) {
+                if ( /^([A-z]+:)?instance$/.test( el.nodeName ) ) {
+                    primInstanceEl = el;
+                    break;
+                }
+            }
+            if ( !primInstanceEl ) {
+                errors.push( 'No primary instance element found as first instance child of <model>.' );
+            }
+            if ( primInstanceEl && primInstanceEl.namespaceURI !== xformsNamespace ) {
+                errors.push( 'Primary instance element has incorrect namespace.' );
+            }
+        }
+
+        if ( primInstanceEl ) {
+            const children = primInstanceEl.children;
+            if ( children.length === 0 ) {
+                errors.push( 'Primary instance element has child.' );
+            } else if ( children.length > 1 ) {
+                errors.push( 'Primary instance element has more than 1 child.' );
+            }
+            if ( children && !children[ 0 ].id ) {
+                errors.push( `Data root node <${children[0].nodeName}> has no id attribute.` );
+            }
+        }
+    }
+
     /*
      * Obtain an isolated "browser" window context and optionally, run a script in this context.
      */

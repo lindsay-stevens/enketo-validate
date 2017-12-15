@@ -8,9 +8,7 @@ This app can be used:
 1. via the command-line, e.g. in a non-javascript form builder such as pyxform
 2. as a javascript nodeJS module to be used in your own javascript application
 
-
-Live demo web application that uses Enketo Validate as a module:  [source code]()
-
+Live demo web application (for testing only) that uses Enketo Validate as a module: https://validate.enketo.org [source code](https://github.com/enketo/enketo-validate-webapp)
 
 ### Via Command-line
 
@@ -47,6 +45,13 @@ const validator = require('enketo-validate');
 // read the xform as string
 
 let result = validator.validate( xformStr );
+
+// The result has the following format:
+// {
+//      warnings: [ 'a warning', 'another warning'],
+//      errors: ['an error', 'another error']
+// }
+// if errors.length is 0, the form passed validation
 ```
 
 ### How it works

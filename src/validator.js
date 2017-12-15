@@ -14,6 +14,10 @@ let validate = xformStr => {
         errors.push( e );
     }
 
+    if ( xform ) {
+        xform.checkStructure( warnings, errors );
+    }
+
     try {
         if ( xform ) {
             xform.parseModel();

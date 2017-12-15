@@ -4,14 +4,14 @@
     <h:title>Form</h:title>
     <model>
         <instance>
-            <data id="a">
-              <a/>
-              <orx:meta>
-                <orx:instanceID/>
-              </orx:meta>
+            <data>
+                <a/>
+                <orx:meta>
+                  <orx:instanceID/>
+                </orx:meta>
             </data>
+            <moredata/>
         </instance>
-        <bind nodeset="/data/b"/>
     </model>
   </h:head>
   <h:body>
