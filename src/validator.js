@@ -2,13 +2,13 @@
 
 const { XForm } = require( './xform' );
 
-let validate = xformStr => {
+let validate = ( xformStr, options ) => {
     let warnings = [];
     let errors = [];
     let xform;
 
     try {
-        xform = new XForm( xformStr );
+        xform = new XForm( xformStr, options );
     } catch ( e ) {
         //console.error( 'parsing failed: ', e );
         errors.push( e );

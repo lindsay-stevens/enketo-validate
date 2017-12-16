@@ -3,11 +3,11 @@
 'use strict';
 
 let program = require( 'commander' );
-let pkg = require( './package' );
-let fs = require( 'fs' );
-let validator = require( './src/validator' );
+const pkg = require( './package' );
+const fs = require( 'fs' );
+const validator = require( './src/validator' );
 
-let _getFileContents = filePath => {
+const _getFileContents = filePath => {
     return new Promise( function( resolve, reject ) {
         fs.readFile( filePath, 'utf8', function( err, xform ) {
             if ( err ) {
@@ -22,15 +22,15 @@ let _getFileContents = filePath => {
     } );
 };
 
-let validate = xformContent => validator.validate( xformContent );
-
 program
     .usage( '[options] <file>' )
     .version( pkg.version )
     .option( '-m, --me', 'get personal validation' )
+    .option( '-d, --debug', 'output raw errors')
     .parse( process.argv );
 
-let xformFile = program.args[ 0 ];
+const xformFile = program.args[ 0 ];
+const options = { debug: program.debug }; 
 
 if ( program.me ) {
     console.log( 'You are correct.\nYour feelings matter.\nYou are wonderful and the world is better with you in it.' );
@@ -39,7 +39,7 @@ if ( program.me ) {
     console.log( `validating ${xformFile}` );
 
     _getFileContents( xformFile )
-        .then( validate )
+        .then( xformStr => validator.validate( xformStr, options ) )
         .catch( function( errors = [] ) {
             errors = Array.isArray(errors) ? errors : [errors];
             console.error( errors.join('\n') );

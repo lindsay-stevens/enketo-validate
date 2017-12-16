@@ -11,13 +11,14 @@ const xslModelSheet = libxslt.parse( sheets.xslModel );
 
 class XForm {
 
-    constructor( xformStr ) {
+    constructor( xformStr, options = {} ) {
         if ( !xformStr || !xformStr.trim() ) {
             throw 'Empty form. [general]';
         }
         this.xformStr = xformStr;
         this.dom = this._getDom();
         this.doc = this.dom.window.document;
+        this.debug = !!options.debug;
     }
 
     get binds() {
@@ -204,11 +205,17 @@ class XForm {
     }
 
     _cleanXmlDomParserError( error ) {
+        if ( this.debug ) {
+            return error;
+        }
         let parts = error.message.split( '\n' );
         return parts[ 0 ] + ' ' + parts.splice( 1, 4 ).join( ', ' );
     }
 
     _cleanXPathException( error ) {
+        if ( this.debug ) {
+            return error;
+        }
         let parts = [ error.message.split( '\n' )[ 0 ], error.name, error.code ]
             .filter( part => !!part );
 
