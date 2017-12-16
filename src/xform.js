@@ -142,6 +142,16 @@ class XForm {
                 errors.push( `Data root node <${children[0].nodeName}> has no id attribute.` );
             }
         }
+
+        // ODK Build bug
+        if ( this.doc.querySelector( 'group:not([ref])' ) ) {
+            warnings.push( 'Found <group> without ref attribute. This could be fine as long as the group has no relevant logic.' );
+        }
+
+        // ODK Build output
+        if ( this.doc.querySelector( 'group:not([ref]) > repeat' ) ) {
+            warnings.push( 'Found <repeat> that has a parent <group> without a ref attribute. If the repeat has relevant logic, this will make the form very slow.' );
+        }
     }
 
     /*

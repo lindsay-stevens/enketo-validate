@@ -25,13 +25,13 @@
     "homepage": "https://github.com/enketo/enketo-validate#readme",
     "dependencies": {
         "commander": "^2.12.2",
-        "enketo-core": "^4.41.6",
         "enketo-xslt": "^1.15.1",
         "jsdom": "^11.5.1",
         "libxslt": "^0.7.0"
     },
     "devDependencies": {
         "chai": "^4.1.2",
-        "mocha": "^4.0.1"
+        "mocha": "^4.0.1",
+        "enketo-core": "^4.41.6"
     }
 }

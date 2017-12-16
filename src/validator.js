@@ -58,6 +58,7 @@ let validate = xformStr => {
                     }
                 }
             } );
+
         } );
 
     }
