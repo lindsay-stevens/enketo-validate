@@ -36,7 +36,7 @@ if ( program.me ) {
     console.log( 'You are correct.\nYour feelings matter.\nYou are wonderful and the world is better with you in it.' );
     process.exit( 0 );
 } else if ( xformFile ) {
-    console.log( `validating ${xformFile}` );
+    console.log( `Enketo validating ${xformFile}` );
 
     _getFileContents( xformFile )
         .then( xformStr => validator.validate( xformStr, options ) )
@@ -52,7 +52,7 @@ if ( program.me ) {
             }
             if (result.errors.length) {
                 console.error( result.errors.join('\n\n') );
-                console.log( '\nResult: Invalid' );
+                console.error( '\nResult: Invalid' );
                 process.exit( 1 );
             } else {
                 console.log( '\n>> XForm is valid! See above for any warnings.\n\n' );
