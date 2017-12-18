@@ -146,7 +146,7 @@ class XForm {
 
         // ODK Build bug
         if ( this.doc.querySelector( 'group:not([ref])' ) ) {
-            warnings.push( 'Found <group> without ref attribute. This could be fine as long as the group has no relevant logic.' );
+            warnings.push( 'Found <group> without ref attribute. This might be fine as long as the group has no relevant logic.' );
         }
 
         // ODK Build output
