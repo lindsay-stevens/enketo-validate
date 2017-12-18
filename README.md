@@ -5,10 +5,10 @@ _Validate [ODK XForms](https://opendatakit.github.io/xforms-spec/) using Enketo'
 
 This app can be used:
 
-1. via the command-line, e.g. in a non-javascript form builder such as pyxform
-2. as a javascript nodeJS module to be used in your own javascript application
+1. via the command-line, e.g. in a non-javascript form builder such as [pyxform](https://github.com/XLSForm/pyxform).
+2. as a nodeJS module to be used in your own javascript application
 
-Live demo web application (for testing only) that uses Enketo Validate as a module: https://validate.enketo.org [source code](https://github.com/enketo/enketo-validate-webapp)
+Live demo web application (meant for testing purposes only) that uses Enketo Validate (and ODK Validate) as a module: https://validate.enketo.org [source code](https://github.com/enketo/enketo-validate-webapp)
 
 ### Via Command-line
 
