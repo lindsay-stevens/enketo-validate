@@ -1,4 +1,4 @@
-/* global describe, it*/
+/* global describe, xdescribe, it*/
 'use strict';
 
 const { XForm } = require( '../../src/xform' );
@@ -95,6 +95,14 @@ describe( 'XPath expressions', () => {
     describe( 'with jr:choice-name() calls', () => {
         it( 'should not throw an error message', () => {
             const expr = 'jr:choice-name("yes", "/data/a")';
+            const evaluationFn = () => xf.enketoEvaluate( expr );
+            expect( evaluationFn ).not.to.throw();
+        } );
+    } );
+
+    xdescribe( 'with comment-status() calls', () => {
+        it( 'should not throw an error message', () => {
+            const expr = 'comment-status(/data/a)';
             const evaluationFn = () => xf.enketoEvaluate( expr );
             expect( evaluationFn ).not.to.throw();
         } );

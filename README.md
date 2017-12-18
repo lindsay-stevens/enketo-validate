@@ -14,9 +14,9 @@ Live demo web application (for testing only) that uses Enketo Validate as a modu
 
 #### Command-line Install
 
-I. install nodeJS 6+
-II. clone repo 
-III. `npm install --production`
+1. install nodeJS 6+
+2. clone repo 
+3. `npm install --production`
 
 #### Command-line Use
 
@@ -67,8 +67,16 @@ In it's current iteration, the validator does the following:
 
 In the future, some ideas to extend validation further are:
 
-* Check whether XForms syntax is valid using an XML Schema.
+* Check itemsets.
+* Check more thoroughly whether XForms syntax is valid using an XML Schema.
 * Check whether all itext elements referred to anywhere exist in model.
+
+### Using a custom XPath Evaluator
+
+The following example shows how to swap Enketo's XPath evaluator with OpenClinica's custom XPath evaluator in command-line mode:
+
+1. Instead of using `npm install --production` do `npm install` which which will also install devDepencies.
+2. Run `npm run oc-build`. This will replace the bundle file in the /build folder.
 
 ### Funding
 

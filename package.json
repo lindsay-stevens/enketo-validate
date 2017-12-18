@@ -5,7 +5,8 @@
     "main": "src/validator.js",
     "scripts": {
         "test": "mocha test/spec/*.spec.js",
-        "build": "browserify src/FormModel.js -o build/FormModel-bundle.js"
+        "build": "browserify src/FormModel.js > build/FormModel-bundle.js",
+        "oc-build": "browserify -g aliasify src/FormModel.js > build/FormModel-bundle.js"
     },
     "repository": {
         "type": "git",
@@ -30,8 +31,15 @@
         "libxslt": "^0.7.0"
     },
     "devDependencies": {
+        "aliasify": "^2.1.0",
         "chai": "^4.1.2",
-        "mocha": "^4.0.1",
-        "enketo-core": "^4.41.6"
+        "enketo-core": "^4.41.6",
+        "enketo-xpathjs-oc": "git+https://github.com/OpenClinica/enketo-xpathjs-oc.git",
+        "mocha": "^4.0.1"
+    },
+    "aliasify": {
+        "aliases": {
+            "enketo-xpathjs": "enketo-xpathjs-oc"
+        }
     }
 }
